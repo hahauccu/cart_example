@@ -53,8 +53,6 @@ class AddProductList extends Migration
      */
     public function down()
     {
-        Schema::table('product-list', function (Blueprint $table) {
-            //
-        });
+       Schema::dropIfExists('product_list');
     }
 }
