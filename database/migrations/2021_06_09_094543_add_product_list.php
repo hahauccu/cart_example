@@ -19,7 +19,7 @@ class AddProductList extends Migration
             $table->text('img_src');
             $table->integer('stock');
             $table->integer('price');
-            $table->timestamp('failed_at')->useCurrent();
+            $table->timestamp('created_at')->useCurrent();
         });
 
         DB::table('product_list')->insert(
