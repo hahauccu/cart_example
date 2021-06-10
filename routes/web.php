@@ -19,5 +19,10 @@ Route::group(["prefix"=>"product"],function(){
 
 Route::group(["prefix"=>"cart"],function(){
 	Route::post('/add','App\Http\Controllers\CartController@addToCart');
+	Route::post('/minus','App\Http\Controllers\CartController@minusToCart');
+
+	Route::post('/remove_product','App\Http\Controllers\CartController@removeProduct');
+	
+
 	Route::get('/list','App\Http\Controllers\CartController@showList');
 });

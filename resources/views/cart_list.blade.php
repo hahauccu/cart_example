@@ -39,14 +39,18 @@
     <tr>
       <td>{{$product["product_name"]}}</td>
       <td>{{$product["product_name"]}}</td>
-      <td>{{$product["in_cart"]}}</td>
+      <td product_id="{{$product['id']}}">
+        <button class="minus_to_cart">-</button> {{$product["in_cart"]}} <button class="add_to_cart">+</button> </td>
       <td>{{$product["price"]}}</td>
       <td>{{$product["in_cart_price"]}}</td>
       <td><a href="JavaScript:void(0)" class="remove_from_cart" product_id="{{$product["id"]}}">remove</a></td>
     </tr>
     @endforeach
     <tr>
-      <td style="text-align:right" colspan="5">total :{{$orderPrice}}</td>
+      <td style="text-align:right" colspan="5">
+        total :{{$orderPrice}}
+        <a id="check_out" href="javascript:void(0);">CheckOut</a>
+      </td>
     </tr>
   </tbody>
 </table>
@@ -72,7 +76,65 @@
   
 
 <svg xmlns="http://www.w3.org/2000/svg" width="348" height="225" viewBox="0 0 348 225" preserveAspectRatio="none" style="display: none; visibility: hidden; position: absolute; top: -100%; left: -100%;"><defs><style type="text/css"></style></defs><text x="0" y="17" style="font-weight:bold;font-size:17pt;font-family:Arial, Helvetica, Open Sans, sans-serif">Thumbnail</text></svg>
- 
+  <script type="text/javascript">
+      
+      $(".remove_from_cart").click(function(){
+        var _this = $(this);
+        var url="/cart/remove_product";
+        
+        $.ajax({
+          url:url,
+          type: "POST",
+          data: {
+            product_id:_this.attr("product_id"),
+            _token:$("#csrf_token").val(),
+          },
+          success: function(message) 
+          {
+            location.reload();
+          }
+        });
+      })
+
+
+      $(".add_to_cart").click(function(){
+        var _this = $(this);
+        var url="/cart/add";
+        
+        $.ajax({
+          url:url,
+          type: "POST",
+          data: {
+            product_id:_this.parent().attr("product_id"),
+            _token:$("#csrf_token").val(),
+          },
+          success: function(message) 
+          {
+            alert(message);
+            location.reload(); 
+          }
+        });
+      })
+
+
+      $(".minus_to_cart").click(function(){
+        var _this = $(this);
+        var url="/cart/minus";
+        
+        $.ajax({
+          url:url,
+          type: "POST",
+          data: {
+            product_id:_this.parent().attr("product_id"),
+            _token:$("#csrf_token").val(),
+          },
+          success: function(message) 
+          {
+            location.reload(); 
+          }
+        });
+      })
+    </script>
   
   </body>
 </html>

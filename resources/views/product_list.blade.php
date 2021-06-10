@@ -91,6 +91,10 @@
           }
         });
       })
+
+      @if(!empty(Session::has('message')))
+        alert("{{Session::get('message')}}")
+      @endif
     </script>
   </body>
 </html>

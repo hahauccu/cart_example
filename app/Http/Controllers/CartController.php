@@ -57,6 +57,10 @@ class CartController
 	public function showList(Request $request)
 	{
 		$cartData = $request->session()->get("cartData");
+		if(empty($cartData))
+		{
+			return redirect("product/list")->with('message', '購物車沒有商品');   ;
+		}
 		$toSearchProduct = array_keys($cartData);
 		$productData = $this->productRepository->getProductData($toSearchProduct);
 		$cartList = $this->checkOut($cartData,$productData,$toSearchProduct);
@@ -102,5 +106,24 @@ class CartController
 		$request->session()->put("cartData",$cartData);
 		return 1;
 	}
+
+
+	
+	public function minusToCart(Request $request)
+	{
+		$toMinusCartId=$_POST["product_id"];
+   		//get user cart data
+		$cartData = $request->session()->get("cartData");
+		$cartData[$toMinusCartId]-=1;
+
+		if($cartData[$toMinusCartId] == 0)
+		{
+			unset($cartData[$toMinusCartId]);
+		}
+		
+		$request->session()->put("cartData",$cartData);
+	}
+	
+
 	
 }
