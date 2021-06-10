@@ -39,4 +39,11 @@ class ProductRepository
       }
 
     }
+
+    public function getProductData($productId)
+    {
+      $productList = new $this->productList;
+      $productsData = $productList::whereIn("id",$productId)->get()->toArray();
+      return $productsData;
+    }
 }
