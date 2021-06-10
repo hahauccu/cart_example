@@ -50,9 +50,10 @@
                      ${{$products["price"]}}
                   </p>
 
-                  <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex justify-content-between 
+                  align-items-center">
                     <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary add_to_cart">Add Cart</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary add_to_cart" product_id="{{$products['id']}}">Add Cart</button>
                      
                     </div>
                     
@@ -84,6 +85,25 @@
   
 
 <svg xmlns="http://www.w3.org/2000/svg" width="348" height="225" viewBox="0 0 348 225" preserveAspectRatio="none" style="display: none; visibility: hidden; position: absolute; top: -100%; left: -100%;"><defs><style type="text/css"></style></defs><text x="0" y="17" style="font-weight:bold;font-size:17pt;font-family:Arial, Helvetica, Open Sans, sans-serif">Thumbnail</text></svg>
-    
+    <script type="text/javascript">
+      console.log($("body").length)
+      $(".add_to_cart").click(function(){
+        var _this = $(this);
+        var url="/cart/add";
+        
+        $.ajax({
+          url:url,
+          type: "POST",
+          data: {
+            product_id:_this.attr("product_id"),
+            _token:$("#csrf_token").val(),
+          },
+          success: function(message) 
+          {
+            alert(message);
+          }
+        });
+      })
+    </script>
   </body>
 </html>
