@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 //models
 use App\Models\ProductList;
+use App\Models\Discount;
 
 //Repository
 use App\Repositories\ProductRepository;
@@ -57,6 +58,8 @@ class CartController
 	public function showList(Request $request)
 	{
 		$cartData = $request->session()->get("cartData");
+
+		$discountCode = $request->session()->get("discountCode");
 		if(empty($cartData))
 		{
 			return redirect("product/list")->with('message', '購物車沒有商品');   ;
@@ -64,11 +67,36 @@ class CartController
 		$toSearchProduct = array_keys($cartData);
 		$productData = $this->productRepository->getProductData($toSearchProduct);
 		$cartList = $this->checkOut($cartData,$productData,$toSearchProduct);
+
+		//discount calculation
+		$discount = array();
+		if(!empty($discountCode))
+		{
+			$discount = Discount::where("discount_code",$discountCode)->first()->toArray();
+			//if is fit the condition
+			if($cartList["orderPrice"] >= $discount['price_condition'])
+			{
+				//type to calculation the check out price
+				switch ($discount["type"]) {
+					case 1:
+						$cartList["orderPrice"]*=$discount["price"];
+						break;
+					case 2:
+						$cartList["orderPrice"]-=$discount["price"];
+						break;
+					default:
+						# code...
+						break;
+				}
+			}
+		}
+
 		return view("cart_list",
         [
             "productData" =>$cartList["productData"],
             "orderPrice" =>$cartList["orderPrice"],
-            "message" =>$cartList["message"]
+            "message" =>$cartList["message"],
+            "discount" => $discount
         ]);
 	}
 
@@ -123,7 +151,21 @@ class CartController
 		
 		$request->session()->put("cartData",$cartData);
 	}
-	
 
-	
+	public function addDiscountCode(Request $request)
+	{
+		$message="discount code not exist";
+		$toAddCode = $_POST["to_add_code"];
+		$discountCodeData= Discount::where("discount_code",$toAddCode)->first();
+		if(!empty($discountCodeData))
+		{
+			$request->session()->put("discountCode",$toAddCode);
+			$message = "use dicount code success";
+		}
+		return $message;
+
+	}
+
+
+
 }

@@ -22,7 +22,10 @@ Route::group(["prefix"=>"cart"],function(){
 	Route::post('/minus','App\Http\Controllers\CartController@minusToCart');
 
 	Route::post('/remove_product','App\Http\Controllers\CartController@removeProduct');
-	
+
+	Route::post('/add_discount_code','App\Http\Controllers\CartController@addDiscountCode');
+
+
 
 	Route::get('/list','App\Http\Controllers\CartController@showList');
 });

@@ -48,6 +48,8 @@
     @endforeach
     <tr>
       <td style="text-align:right" colspan="5">
+        {{!empty($discount["discount_content"])? $discount["discount_content"] : ""}}
+        <input id="discount_code" {{!empty($discount["discount_code"])? 'value='.$discount["discount_code"] : ""}}> <button id="use_discount_code">use discount code</button>
         total :{{$orderPrice}}
         <a id="check_out" href="javascript:void(0);">CheckOut</a>
       </td>
@@ -134,6 +136,30 @@
           }
         });
       })
+
+
+      $("#use_discount_code").click(function(){
+        if($("#discount_code").val() == "")
+        {
+          alert("discount code is empty");
+          return 0;
+        }
+        var url="/cart/add_discount_code";
+        $.ajax({
+          url:url,
+          type: "POST",
+          data: {
+            to_add_code:$("#discount_code").val(),
+            _token:$("#csrf_token").val(),
+          },
+          success: function(message) 
+          {
+            alert(message);
+            location.reload(); 
+          }
+        });
+      })
+
     </script>
   
   </body>
