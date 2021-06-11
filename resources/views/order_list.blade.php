@@ -23,35 +23,28 @@
 
     <main role="main">
 
-      <div class="album py-5 bg-light">
-        <div class="container">
+      <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">price</th>
+      <th scope="col">check out time</th>
+      <th scope="col">view_detail</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    @foreach($orderData as $order)
+    <tr>
+      <td>{{$order["recive_price"]}}</td>
+      <td>{{$order["updated_at"]}}</td>
+      <td><a href="/order/list/{{$order["random_id"]}}">detail</a></td>
+    </tr>
+    @endforeach
+    
+  </tbody>
+</table>
 
-          <div class="row">
-            @foreach($productList as $products)
-            <div class="col-md-4">
-              <div class="card mb-4 shadow-sm">
-                <img class="card-img-top" /{{$products["img_src"]}}" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="/{{$products["img_src"]}}" data-holder-rendered="true">
-                <div class="card-body">
-                  <p class="card-text">
-                    {{$products["product_name"]}}
-                     ${{$products["price"]}}
-                  </p>
-
-                  <div class="d-flex justify-content-between 
-                  align-items-center">
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary add_to_cart" product_id="{{$products['id']}}">Add Cart</button>
-                     
-                    </div>
-                    
-                  </div>
-                </div>
-              </div>
-            </div>
-            @endforeach
-          </div>
-        </div>
-      </div>
+     
 
     </main>
 
@@ -72,29 +65,13 @@
   
 
 <svg xmlns="http://www.w3.org/2000/svg" width="348" height="225" viewBox="0 0 348 225" preserveAspectRatio="none" style="display: none; visibility: hidden; position: absolute; top: -100%; left: -100%;"><defs><style type="text/css"></style></defs><text x="0" y="17" style="font-weight:bold;font-size:17pt;font-family:Arial, Helvetica, Open Sans, sans-serif">Thumbnail</text></svg>
-    <script type="text/javascript">
-      console.log($("body").length)
-      $(".add_to_cart").click(function(){
-        var _this = $(this);
-        var url="/cart/add";
-        
-        $.ajax({
-          url:url,
-          type: "POST",
-          data: {
-            product_id:_this.attr("product_id"),
-            _token:$("#csrf_token").val(),
-          },
-          success: function(message) 
-          {
-            alert(message);
-          }
-        });
-      })
+  <script type="text/javascript">
 
       @if(!empty(Session::has('message')))
         alert("{{Session::get('message')}}")
       @endif
+
     </script>
+  
   </body>
 </html>

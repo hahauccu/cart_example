@@ -30,3 +30,8 @@ Route::group(["prefix"=>"cart"],function(){
 	Route::get('/list','App\Http\Controllers\CartController@showList');
 });
 
+Route::group(["prefix"=>"order"],function(){
+	Route::get('/list','App\Http\Controllers\OrderController@list');
+	Route::get('/list/{random_id}','App\Http\Controllers\OrderController@listDetail');
+});
+

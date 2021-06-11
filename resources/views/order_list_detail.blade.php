@@ -23,35 +23,49 @@
 
     <main role="main">
 
-      <div class="album py-5 bg-light">
-        <div class="container">
+      <table class="table">
+  <thead>
+    <tr>
+      <td scope="col">price: </td>
+      <td>{{$orderData["recive_price"]}}</td>
+    </tr>
+    <tr>
+      <td scope="col">check out time : </td>
+      <td>{{$orderData["created_at"]}}</td>
+    </tr>
+    <tr>
+      <td scope="col">discount : </td>
+      <td>{{$orderData["discount_content"]["discount_content"]}}</td>
+    </tr>
+    <tr>
+      <td> product list :
+    </tr>
+    
+      @foreach($orderData["product_content"] as $value)
+        <tr>
+          <td>
+            <img style="width: 400px; height: 400px;" src="/{{$value["img_src"]}}">
+            
+          </td>
+          <td>product name:{{$value["product_name"]}}</td>
 
-          <div class="row">
-            @foreach($productList as $products)
-            <div class="col-md-4">
-              <div class="card mb-4 shadow-sm">
-                <img class="card-img-top" /{{$products["img_src"]}}" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="/{{$products["img_src"]}}" data-holder-rendered="true">
-                <div class="card-body">
-                  <p class="card-text">
-                    {{$products["product_name"]}}
-                     ${{$products["price"]}}
-                  </p>
+          <td>product price:{{$value["price"]}}</td>
 
-                  <div class="d-flex justify-content-between 
-                  align-items-center">
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary add_to_cart" product_id="{{$products['id']}}">Add Cart</button>
-                     
-                    </div>
-                    
-                  </div>
-                </div>
-              </div>
-            </div>
-            @endforeach
-          </div>
-        </div>
-      </div>
+          <td>purchased number:{{$value["purchased_number"]}}</td>
+
+          <td>item cost:{{$value["purchased_number"] * $value["price"]}}</td>
+
+        </tr>
+      @endforeach
+      
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+
+     
 
     </main>
 
@@ -72,29 +86,13 @@
   
 
 <svg xmlns="http://www.w3.org/2000/svg" width="348" height="225" viewBox="0 0 348 225" preserveAspectRatio="none" style="display: none; visibility: hidden; position: absolute; top: -100%; left: -100%;"><defs><style type="text/css"></style></defs><text x="0" y="17" style="font-weight:bold;font-size:17pt;font-family:Arial, Helvetica, Open Sans, sans-serif">Thumbnail</text></svg>
-    <script type="text/javascript">
-      console.log($("body").length)
-      $(".add_to_cart").click(function(){
-        var _this = $(this);
-        var url="/cart/add";
-        
-        $.ajax({
-          url:url,
-          type: "POST",
-          data: {
-            product_id:_this.attr("product_id"),
-            _token:$("#csrf_token").val(),
-          },
-          success: function(message) 
-          {
-            alert(message);
-          }
-        });
-      })
+  <script type="text/javascript">
 
       @if(!empty(Session::has('message')))
         alert("{{Session::get('message')}}")
       @endif
+
     </script>
+  
   </body>
 </html>

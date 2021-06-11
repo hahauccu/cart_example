@@ -9,4 +9,5 @@ class PurchasedProductList extends Model
 {
     use HasFactory;
     protected $table = 'purchased_product_list';
+    
 }
