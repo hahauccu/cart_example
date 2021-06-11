@@ -20,6 +20,7 @@ class DiscountCundition extends Migration
             $table->integer('type');
             $table->integer('price_condition');
             $table->float('price');
+            $table->timestamp('updated_at')->useCurrent();
             $table->timestamp('created_at')->useCurrent();
         });
 

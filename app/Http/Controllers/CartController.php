@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 //models
 use App\Models\ProductList;
 use App\Models\Discount;
+use App\Models\PurchasedProductList;
+use App\Models\CheckOut;
 
 //Repository
 use App\Repositories\ProductRepository;
@@ -66,41 +68,21 @@ class CartController
 		}
 		$toSearchProduct = array_keys($cartData);
 		$productData = $this->productRepository->getProductData($toSearchProduct);
-		$cartList = $this->checkOut($cartData,$productData,$toSearchProduct);
 
 		//discount calculation
 		$discount = array();
-		if(!empty($discountCode))
-		{
-			$discount = Discount::where("discount_code",$discountCode)->first()->toArray();
-			//if is fit the condition
-			if($cartList["orderPrice"] >= $discount['price_condition'])
-			{
-				//type to calculation the check out price
-				switch ($discount["type"]) {
-					case 1:
-						$cartList["orderPrice"]*=$discount["price"];
-						break;
-					case 2:
-						$cartList["orderPrice"]-=$discount["price"];
-						break;
-					default:
-						# code...
-						break;
-				}
-			}
-		}
+
+		$cartList = $this->checkOut($cartData,$productData,$toSearchProduct,$discountCode);
 
 		return view("cart_list",
         [
             "productData" =>$cartList["productData"],
             "orderPrice" =>$cartList["orderPrice"],
-            "message" =>$cartList["message"],
-            "discount" => $discount
+            "discount" => $cartList["discount"]
         ]);
 	}
 
-	public function checkOut($cartData,$productData,$toSearchProduct)
+	public function checkOut($cartData,$productData,$toSearchProduct,$discountCode="")
 	{
 		$orderPrice = 0;
 		$stockArray =$this->productRepository->checkStock($toSearchProduct);
@@ -111,6 +93,8 @@ class CartController
 			{
 				$message .=$value["product_name"]."庫存不足 已移出購物車請重新購買<br>";
 				unset($productData[$key]);
+				unset($cartData[$value["id"]]);
+				
 				continue;
 			}
 
@@ -120,9 +104,44 @@ class CartController
 			$productData[$key]["in_cart_price"] = $value["price"] * $sell_product_number;
 			$orderPrice+=$productData[$key]["in_cart_price"];
 		}
+
+		$discount=array();
+		if(!empty($discountCode))
+		{
+			$discount = Discount::where("discount_code",$discountCode)->first()->toArray();
+			//if is fit the condition
+			if($orderPrice >= $discount['price_condition'])
+			{
+				//type to calculation the check out price
+				switch ($discount["type"]) {
+					case 1:
+						$orderPrice*=$discount["price"];
+						break;
+					case 2:
+						$orderPrice-=$discount["price"];
+						break;
+					default:
+						# code...
+						break;
+				}
+			}
+		}
+		// if stock not enough
+		if(!empty($cartList["message"]))
+		{
+			$request->session()->flash('message', $cartList["message"]);
+
+			$request->session()->put('cartData', $cartList["cartData"]);
+			if(empty($cartList["cartData"]))
+			{
+				return redirect("product/list")->with('message', $cartList["message"].'\n購物車沒有商品');   ;
+			}
+		}
 		return ["productData" => $productData,
 				"orderPrice"=>$orderPrice,
 				"message"=>$message,
+				"cartData" =>$cartData,
+				"discount" =>$discount,
 				];
 	}
 
@@ -166,6 +185,70 @@ class CartController
 
 	}
 
+	public function saveCheckOut(Request $request)
+	{
+		$cartData = $request->session()->get("cartData");
 
+		$discountCode = $request->session()->get("discountCode");
+		if(empty($cartData))
+		{
+			return redirect("product/list")->with('message', '購物車沒有商品');   ;
+		}
+		$toSearchProduct = array_keys($cartData);
+		$productData = $this->productRepository->getProductData($toSearchProduct);
+
+		//discount calculation
+		$discount = array();
+
+		$cartList = $this->checkOut($cartData,$productData,$toSearchProduct,$discountCode);
+
+		
+		
+		//check out data 
+		$random_id = time().$this->getRamdomString(8);
+		$checkOut = new CheckOut;
+		$checkOut->user_id=1;
+		$checkOut->random_id=$random_id;
+		$checkOut->recive_price = $cartList["orderPrice"];
+
+		if(!empty($cartList["discount"]))
+		{
+			$checkOut->discount_id=$cartList["discount"]["id"];
+		}
+		$checkOut->save();
+		$checkOutId = CheckOut::where("random_id",$random_id)->first()->id;
+		
+		foreach ($cartList["cartData"] as $key => $value) 
+		{
+			//insert sold product
+			$purchasedProductList = new PurchasedProductList;
+			$purchasedProductList->product_id=$key;
+			$purchasedProductList->purchased_number=$value;
+			$purchasedProductList->check_out_id=$random_id;
+			$purchasedProductList->save();
+
+			// update product stock
+			$tmepProductData = ProductList::where("id",$key)->first();
+			$tmepProductData->stock-=$value;
+			$tmepProductData->save();
+
+		}
+		//clean session
+		$request->session()->forget('cartData');
+		$request->session()->forget('discountCode');
+		return $random_id;
+	}
+
+
+	public function getRamdomString($randonStringLength)
+	{
+		$pool="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		$toReturnString = "";
+		for ($i=0; $i <$randonStringLength ; $i++) 
+		{ 
+			$toReturnString.=$pool[rand(0,strlen($pool))-1];
+		}
+		return $toReturnString;
+	}
 
 }

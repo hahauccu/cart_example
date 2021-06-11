@@ -18,6 +18,7 @@ class PurchasedProductList extends Migration
             $table->integer('product_id');
             $table->integer('purchased_number');
             $table->text('check_out_id');
+            $table->timestamp('updated_at')->useCurrent();
             $table->timestamp('created_at')->useCurrent();
         });
     }

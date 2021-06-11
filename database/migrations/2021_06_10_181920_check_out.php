@@ -17,8 +17,9 @@ class CheckOut extends Migration
             $table->id();
             $table->text('user_id');
             $table->text('random_id');
-            $table->integer('discount_id');
+            $table->integer('discount_id')->nullable();
             $table->integer('recive_price');
+            $table->timestamp('updated_at')->useCurrent();
             $table->timestamp('created_at')->useCurrent();
         });
     }

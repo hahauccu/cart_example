@@ -19,6 +19,7 @@ class AddProductList extends Migration
             $table->text('img_src');
             $table->integer('stock');
             $table->integer('price');
+            $table->timestamp('updated_at')->useCurrent();
             $table->timestamp('created_at')->useCurrent();
         });
 

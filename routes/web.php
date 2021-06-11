@@ -25,7 +25,8 @@ Route::group(["prefix"=>"cart"],function(){
 
 	Route::post('/add_discount_code','App\Http\Controllers\CartController@addDiscountCode');
 
-
+	Route::post('/check_out','App\Http\Controllers\CartController@saveCheckOut');
 
 	Route::get('/list','App\Http\Controllers\CartController@showList');
 });
+

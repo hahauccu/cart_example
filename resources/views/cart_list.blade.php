@@ -160,6 +160,26 @@
         });
       })
 
+      $("#check_out").click(function(){
+        var url="/cart/check_out";
+        $.ajax({
+          url:url,
+          type: "POST",
+          data: {
+            _token:$("#csrf_token").val(),
+          },
+          success: function(random_id) 
+          {
+            location.href="/order/list/"+random_id; 
+          }
+        });
+      })
+
+
+      @if(!empty(Session::has('message')))
+        alert("{{Session::get('message')}}")
+      @endif
+
     </script>
   
   </body>
