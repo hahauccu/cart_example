@@ -1,8 +1,5 @@
 <?php
 namespace App\Repositories;
-
-Use BaseFunction;
-Use Config;
 use App\Models\ProductList;
 
 
@@ -15,6 +12,21 @@ class ProductRepository
     {
         $this->productList = $productList;
        
+    }
+
+    public function get()
+    {
+      return $this->productList::get()->toArray();
+    }
+
+    public function getProductById($productId)
+    {
+      return $this->productList::where("id",$productId)->first()->toArray();
+    }
+
+    public function getProductByIdArray($productId)
+    {
+      return $this->productList::whereIn("id",$productId)->get()->toArray();
     }
 
     public function checkStock($productId)
@@ -42,8 +54,6 @@ class ProductRepository
 
     public function getProductData($productId)
     {
-      $productList = new $this->productList;
-      $productsData = $productList::whereIn("id",$productId)->get()->toArray();
-      return $productsData;
+      return $this->productList::whereIn("id",$productId)->get()->toArray();
     }
 }

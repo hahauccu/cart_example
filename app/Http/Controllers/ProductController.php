@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProductList;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
+use App\Service\ProductService;
 
-class ProductController extends BaseController
+
+class ProductController 
 {
+
+	public function __construct(ProductService $productService)
+	{
+        $this->productService = $productService;
+    }
+
    public function showList()
    {
-   	$productList = ProductList::get()->toArray();
    	return view("product_list",
         [
-            "productList" =>$productList
+            "productList" =>$this->productService->get()
         ]);
    }
 }
