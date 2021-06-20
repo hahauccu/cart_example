@@ -93,7 +93,7 @@
           },
           success: function(message) 
           {
-            location.reload();
+            //location.reload();
           }
         });
       })
@@ -113,7 +113,7 @@
           success: function(message) 
           {
             alert(message);
-            location.reload(); 
+            //location.reload(); 
           }
         });
       })
@@ -132,7 +132,7 @@
           },
           success: function(message) 
           {
-            location.reload(); 
+            //location.reload(); 
           }
         });
       })
@@ -155,7 +155,7 @@
           success: function(message) 
           {
             alert(message);
-            location.reload(); 
+            //location.reload(); 
           }
         });
       })
@@ -170,7 +170,7 @@
           },
           success: function(random_id) 
           {
-            location.href="/order/list/"+random_id; 
+            //location.href="/order/list/"+random_id; 
           }
         });
       })
