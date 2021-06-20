@@ -8,7 +8,7 @@
       <a href="/cart/list" class="navbar-brand p-2 ">
         <strong>Cart</strong>
       </a>
-      <a href="checkout" class="navbar-brand p-2 ">
+      <a href="/order/list" class="navbar-brand p-2 ">
         <strong>Checkout</strong>
       </a>
 

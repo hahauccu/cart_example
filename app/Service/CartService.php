@@ -51,12 +51,13 @@ class CartService
 	{
 		$toSearchProduct = array_keys($cartData);
 		$productData = $this->productRepository->getProductByIdArray($toSearchProduct);
-		return  $this->checkOut($cartData,$productData,$toSearchProduct,$discountCode);
+		return $this->checkOut($cartData,$productData,$toSearchProduct,$discountCode);
 	}
 
 	public function checkOut($cartData,$productData,$toSearchProduct,$discountCode)
 	{
 		$discount = array();
+		$calculatDiscount = array("discount"=>"","orderPrice"=>"");
 		$orderPrice = 0;
 		$stockArray =$this->productRepository->checkStock($toSearchProduct);
 		$message = "";
@@ -76,14 +77,15 @@ class CartService
 			$productData[$key]["in_cart_price"] = $value["price"] * $sell_product_number;
 			$orderPrice+=$productData[$key]["in_cart_price"];
 		}
-		$calculatDiscount = array("discount"=>"","orderPrice"=>"");
+		
 		if(!empty($discountCode))
 		{
 			$calculatDiscount = $this->discountService->calculatDiscount($discountCode,$orderPrice);
+			$orderPrice = $calculatDiscount["orderPrice"];
 		}
 
 		return ["productData" => $productData,
-				"orderPrice"=>$calculatDiscount["orderPrice"],
+				"orderPrice"=>$orderPrice,
 				"message"=>$message,
 				"cartData" =>$cartData,
 				"discount" =>$calculatDiscount["discount"],

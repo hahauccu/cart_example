@@ -214,17 +214,16 @@ class CartController
 		foreach ($cartList["cartData"] as $key => $value) 
 		{
 			//insert sold product
-			$purchasedProductList = new PurchasedProductList;
-			$purchasedProductList->product_id=$key;
-			$purchasedProductList->purchased_number=$value;
-			$purchasedProductList->check_out_id=$random_id;
-			$purchasedProductList->save();
+			$toSaveData = array(
+				"product_id"=>$key,
+				"purchased_number"=>$value,
+				"check_out_id"=>$random_id,
+				"product_id"=>$key);
+
+			$this->productRepository->savePurchasedProductList($toSaveData);
 
 			// update product stock
-			$tmepProductData = ProductList::where("id",$key)->first();
-			$tmepProductData->stock-=$value;
-			$tmepProductData->save();
-
+			$this->productRepository->updateProductStock($key,$value*-1);
 		}
 		//clean session
 		$request->session()->forget('cartData');
